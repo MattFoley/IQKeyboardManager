@@ -34,6 +34,10 @@
 #import "IQUIViewController+Additions.h"
 #import "IQPreviousNextView.h"
 
+#ifdef SW_MESSAGES
+    #import "CrawlMessagesKeyboardView.h"
+#endif
+
 #import <UIKit/UINavigationBar.h>
 #import <UIKit/UITapGestureRecognizer.h>
 #import <UIKit/UITextField.h>
@@ -477,9 +481,13 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     else
     {
         static UIWindow *_keyWindow = nil;
-        
-        /*  (Bug ID: #23, #25, #73)   */
+
+#ifdef SW_MESSAGES
+        UIWindow *originalKeyWindow = [CrawlMessagesKeyboardView rootController].view.window;
+#else
         UIWindow *originalKeyWindow = [[UIApplication sharedApplication] keyWindow];
+#endif
+        /*  (Bug ID: #23, #25, #73)   */
         
         //If original key window is not nil and the cached keywindow is also not original keywindow then changing keywindow.
         if (originalKeyWindow != nil && _keyWindow != originalKeyWindow)  _keyWindow = originalKeyWindow;
@@ -561,7 +569,11 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     CGSize kbSize = _kbSize;
     kbSize.height += keyboardDistanceFromTextField;
 
+#ifdef SW_MESSAGES
+    CGRect statusBarFrame = CGRectZero;
+#else
     CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
+#endif
     
     //  (Bug ID: #250)
     IQLayoutGuidePosition layoutGuidePosition = IQLayoutGuidePositionNone;
